@@ -98,7 +98,7 @@ def main():
     if "nupic" in requirement:
       nupicPackage = requirement
       break
-  nupicInstall = ("pip install --target %s %s"
+  nupicInstall = ("pip install --no-cache-dir --target %s %s"
                   % (os.path.join(modelRunnerDir, "nupic"), nupicPackage))
   os.system(nupicInstall)
   zipIncludes = generate_zip_includes(os.path.join(modelRunnerDir,
