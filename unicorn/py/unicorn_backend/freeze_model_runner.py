@@ -122,6 +122,7 @@ def main():
                                                  "prettytable"],
                               zipIncludes=zipIncludes,
                               includeFiles=includeFiles,
+                              includeStat=False,
                               silent=True)
 
   freezer.Freeze()
