@@ -1,4 +1,4 @@
-cx_freeze==4.3.4
+https://bitbucket.org/oxtopus/cx_freeze/get/sip.tar.gz#egg=cx_Freeze-5.0
 validictory==0.9.1
 
 # NuPIC HTM
