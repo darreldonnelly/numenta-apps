@@ -25,6 +25,7 @@ import pyproj
 import shutil
 
 
+
 def getRequirements(requirementsPath):
   """
   Return a list of requirements based on a requirements.txt file.
@@ -85,7 +86,6 @@ def main():
   modelRunnerDir = os.path.dirname(os.path.realpath(__file__))
   buildDir = os.path.join(modelRunnerDir, "build")
   distDir = os.path.join(modelRunnerDir, "dist")
-  nupicDir = os.path.join(modelRunnerDir, "nupic")
   shutil.rmtree(buildDir, ignore_errors=True)
   shutil.rmtree(distDir, ignore_errors=True)
 
@@ -107,6 +107,7 @@ def main():
                               includeFiles=includeFiles)
 
   freezer.Freeze()
+
 
 
 if __name__ == "__main__":
