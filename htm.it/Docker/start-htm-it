@@ -2,12 +2,10 @@
 
 sysctl -w net.core.somaxconn=1024
 
-service mysql start
-rabbitmq-server -detached
 rabbitmq-plugins enable rabbitmq_management
-wget http://localhost:15672/cli/rabbitmqadmin -O /usr/local/bin/rabbitmqadmin
-chmod a+x /usr/local/bin/rabbitmqadmin
+rabbitmq-server -detached
+service mysql start
 
 python setup.py init
 nginx -p . -c conf/htm-it-api.conf
-supervisord -c conf/supervisord.conf
+supervisord -n -c conf/supervisord.conf

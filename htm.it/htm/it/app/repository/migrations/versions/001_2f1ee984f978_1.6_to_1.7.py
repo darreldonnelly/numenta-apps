@@ -55,8 +55,10 @@ def upgrade():
   op.alter_column("annotation", "timestamp",
                   type_=sa.DATETIME,
                   existing_nullable=False,
-                  existing_server_default=sa.text(
-                    "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
+                  existing_server_default=sa.text("'0000-00-00 00:00:00'"))
+                  # This is causing migrations to fail
+                  #existing_server_default=sa.text(
+                  #  "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
 
   op.alter_column("annotation", "created",
                   type_=sa.DATETIME,

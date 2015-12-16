@@ -88,5 +88,5 @@ stdout_logfile=logs/aggregator_service.log
 redirect_stderr=true
 
 [include]
-files = ../../htmengine/conf/supervisord-base.conf
+files = ../docker/supervisord-base.conf
 
