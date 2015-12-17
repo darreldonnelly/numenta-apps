@@ -271,3 +271,30 @@ Once built, docs will be in ``build/sphinx/html``.  Periodically, you should run
     sphinx-apidoc -f -o docs/ htm-it
     git add docs/*.rst
     git commit
+
+
+
+Docker
+======
+
+To build:
+
+::
+
+    docker build -t htm.it:latest htm.it
+
+
+To launch locally:
+
+::
+
+    docker run  --privileged -p 9001:9001 -p 443:443 -v ~/.aws:/root/.aws -e MYSQL_HOST=localhost -e MYSQL_USER=root -e RABBITMQ_HOST=localhost -e RABBITMQ_USER=guest -e RABBITMQ_PASSWORD=guest htm.it
+
+To deploy using senza:
+
+::
+
+    senza create senza.yaml 1  --region eu-west-1  ApplicationId="" DockerImage="" MintBucket="" ScalyrAccountKey=""
+
+
+

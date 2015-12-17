@@ -1,0 +1,101 @@
+SenzaInfo:
+  StackName: Grok
+  Parameters:
+    - ApplicationId:
+        Description: "ID to identify application registration in Kio"
+    - DockerImage:
+        Description: "Docker image version of trasnsactor to use."
+    - MintBucket:
+        Description: "Mint bucket for application"
+    - ScalyrAccountKey:
+        Description: "Account key for scalyr logging"
+
+# a list of senza components to apply to the definition
+SenzaComponents:
+  # this basic configuration is required for the other components
+  - Configuration:
+      Type: Senza::StupsAutoConfiguration # auto-detect network setup
+
+  # will create a launch configuration and   auto scaling group with scaling triggers
+  - AppServer:
+      Type: Senza::TaupageAutoScalingGroup
+      InstanceType: m4.large
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvdk
+          Ebs:
+            VolumeSize: 10
+            VolumeType: gp2
+      SecurityGroups:
+      - Fn::GetAtt:
+        - HtmItSecurityGroup
+        - GroupId
+      IamRoles:
+        - Ref: HtmItRole
+      AssociatePublicIpAddress: false # change for standalone deployment in default VPC
+      TaupageConfig:
+        #health_check_path: /htm-it/admin
+        root: true
+        privileged: true
+        application_id: "{{Arguments.ApplicationId}}"
+        runtime: Docker
+        source: "{{Arguments.DockerImage}}"
+        ports:
+          8443: 443
+          9001: 9001
+        mint_bucket: "{{Arguments.MintBucket}}"
+        scalyr_account_key: "{{Arguments.ScalyrAccountKey}}"
+#        environment:
+#          ZOOKEEPER_HOST_LB: "{{Arguments.ZookeeperHost}}"
+#          KAFKA_BROKER_LB: "{{Arguments.KafkaHost}}"
+        mounts:
+          /var/lib/mysql:
+            partition: /dev/xvdk
+            filesystem: ext4
+            erase_on_boot: true
+            options: noatime,nodiratime,nobarrier
+
+Resources:
+  HtmItSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group for htm-it"
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 9001
+        ToPort: 9001
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 8443
+        ToPort: 8443
+        CidrIp: 0.0.0.0/0
+
+  HtmItRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: ec2.amazonaws.com
+          Action: sts:AssumeRole
+      Path: /
+      Policies:
+      - PolicyName: HtmIt
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Effect: Allow
+            Action: "s3:GetObject"
+            Resource: ["arn:aws:s3:::{{Arguments.MintBucket}}/{{Arguments.ApplicationId}}/*"]
+          - Effect: Allow
+            Action: ["autoscaling:Describe*", "cloudformation:Describe*", "cloudformation:List*", "cloudwatch:Describe*", "cloudwatch:Get*", "cloudwatch:List*", "ec2:Describe*", "elasticache:Describe*", "elasticloadbalancing:Describe*", "iam:Get*", "iam:List*", "kinesis:Describe*", "opsworks:Describe*", "rds:Describe*", "rds:Describe*", "rds:ListTagsForResource", "rds:ListTagsForResource", "route53:Get*", "route53:List*", "tag:Get*"]
+            Resource: "*"
+          - Effect: Allow
+            Action: "ses:SendEmail"
+            Resource: "*"
+

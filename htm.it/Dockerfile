@@ -2,6 +2,7 @@ FROM htmengine:latest
 ENV HTM_IT_HOME=/opt/numenta/numenta-apps/htm-it/
 RUN apt-get update
 RUN apt-get install -y nginx mysql-server rabbitmq-server language-pack-en
+RUN pip install grokcli
 
 ADD . ${HTM_IT_HOME}
 WORKDIR ${HTM_IT_HOME}

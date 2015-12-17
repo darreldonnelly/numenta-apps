@@ -4,8 +4,10 @@ sysctl -w net.core.somaxconn=1024
 
 rabbitmq-plugins enable rabbitmq_management
 rabbitmq-server -detached
-service mysql start
 
+mysql_install_db
+service mysql start
 python setup.py init
+
 nginx -p . -c conf/htm-it-api.conf
 supervisord -n -c conf/supervisord.conf
